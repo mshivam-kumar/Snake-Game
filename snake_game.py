@@ -1,16 +1,25 @@
 import pygame
 import random
+pygame.mixer.init()
 pygame.init()
+# pygame.mixer.music.play()
+
 #Colors
 white=(255,255,255)
 red=(255,0,0)
 black=(0,0,0)
+
 screen_width=900
 screen_height=600
 #Game title
 pygame.display.set_caption("SnakeGame")
-# pygame.display.update()
+
+#Create window
 gameWindow=pygame.display.set_mode((screen_width,screen_height))
+# bgimg=pygame.image.load("snake_image.jpeg")
+#Background image
+bgimg=pygame.image.load("bg_img1.jpg")
+bgimg=pygame.transform.scale(bgimg,(screen_width,screen_height)).convert_alpha()
 pygame.display.update()
 
 font=pygame.font.SysFont(None,55)
@@ -26,20 +35,30 @@ def text_screen(text,color,x,y):
 
 
 def plot_snake(gameWindow,color,snk_list,snake_size):
+    i=0
     for x,y in snk_list:
-        pygame.draw.rect(gameWindow,color,[x,y,snake_size,snake_size])
+        if(i<1):
+            pygame.draw.rect(gameWindow,color,[x,y,snake_size,snake_size])
+        else:
+            pygame.draw.rect(gameWindow,color,[x,y,snake_size,snake_size])
+        i+=1
+
 
 def welcome():
+    pygame.mixer.music.load("start_game.mp3")
+    pygame.mixer.music.play()
     exit_game = False
     while not exit_game:
-        gameWindow.fill((233,210,229))
-        text_screen("Welcome to Snakes", black, 260, 250)
+        gameWindow.fill((230,250,120))
+        text_screen("Welcome to Snakes Game", black, 260, 250)
         text_screen("Press Space Bar To Play", black, 232, 290)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 exit_game = True
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
+                    pygame.mixer.music.load("play_sound.mp3")
+                    pygame.mixer.music.play()
                     game_loop()
                 if event.key==pygame.K_q:
                     exit_game=True
@@ -124,9 +143,10 @@ def game_loop():
                         # snk_length+=5
 
             gameWindow.fill(white)
+            gameWindow.blit(bgimg,(0,0))
             text_screen("Score: "+str(score),red,5,5)
             text_screen("High Score: "+str(highscore),red,600,5)
-            text_screen("press q to exit",red,180,560)
+            text_screen("press q to exit",black,180,560)
             pygame.draw.rect(gameWindow,red,[food_x,food_y,snake_size,snake_size])
             head=[]
             head.append(snake_x)
@@ -137,17 +157,20 @@ def game_loop():
         # pygame.draw.rect(gameWindow,black,[snake_x,snake_y,snake_size,snake_size])
             # if(head in snk_list[:-1]):
                 # game_over=True
-            for x in snk_list[:-1]:
-                if x == head:
-                    game_over = True
-                    break
-            for p in snk_list[:-1]:
-                if(p[0]==head[0] and p[1]==head[1]):
-                    game_over=True
-                    break
+            # for x in snk_list[:-1]:
+                # if x == head:
+                    # game_over = True
+                    # break
+            # for p in snk_list[:-1]:
+                # if(p[0]==head[0] and p[1]==head[1]):
+                    # game_over=True
+                    # break
             if snake_x<0 or snake_x>screen_width or snake_y<0 or snake_y>screen_height:
+                pygame.mixer.music.load("gameover.mp3")
+                pygame.mixer.music.play()
+
                 game_over = True
-                break
+                # break
 
             plot_snake(gameWindow,black,snk_list,snake_size)
         pygame.display.update()
